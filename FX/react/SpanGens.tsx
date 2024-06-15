@@ -7,15 +7,19 @@ interface SpanGensInterface {
   rotation?: number;
   transformsec?: number;
   transformdelay?: number;
+  SpanStyle?: React.CSSProperties;
+  DivStyle?: React.CSSProperties;
 }
 
 const SpanGens: React.FC<SpanGensInterface> = ({
   title,
-  fontSize = 20,
+  fontSize = 15,
   separacion = 1,
   rotation = 90,
   transformsec = 4,
   transformdelay = 1,
+  SpanStyle,
+  DivStyle,
 }) => {
   const divRef = useRef<HTMLDivElement>(null);
   const spanRefs = useRef<(HTMLSpanElement | null)[]>([]);
@@ -41,18 +45,28 @@ const SpanGens: React.FC<SpanGensInterface> = ({
       const Separate = i * fontSize * separacion;
 
       span.style.transform = "rotate(0deg)";
-      span.style.margin = `0px ${Separate}px`;
+      span.style.marginLeft = `${Separate}px`;
     });
   }, []);
+
+  const widthText = title.length*fontSize*separacion;
+  const width = window.innerWidth;
 
   const ToReturn = (
     <div
       ref={divRef}
       style={{
         position: "relative",
+        display: 'grid',
         textAlign: "center",
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: `${widthText}px`,
+        minHeight: 40,
+        height: `${40 * widthText%width}`,
         transform: `rotate(${rotation}deg)`,
-        transition: `transform ${transformsec}s ease`
+        transition: `transform ${transformsec}s ease`,
+        ...DivStyle,
       }}
     >
       {title.split("").map((title, i) => {
@@ -64,12 +78,14 @@ const SpanGens: React.FC<SpanGensInterface> = ({
             key={i}
             style={{
               position: "absolute",
-              margin: `0px 0px`,
+              marginLeft: `0px`,
               width: fontSize,
               fontSize: fontSize,
 
               transition: `transform ${propsTransition}, margin ${propsTransition}`,
               transform: `rotate(${rotation}deg)`,
+
+              ...SpanStyle,
             }}
           >
             {title}
